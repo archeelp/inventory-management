@@ -15,18 +15,21 @@ def compare_password(password, expected):
     return sha256_crypt.verify(password,expected)
 
 def is_admin():
-    return session['user_type'] == 'admin'
+    return session.get('user_type') == 'admin'
 
 def is_logged_in():
     return 'user_id' in session and 'user_type' in session
 
 def is_customer():
-    return session['user_type'] == 'customer'
+    return session.get('user_type') == 'customer'
 
 def current_user():
     if 'user_type' in session :
         mycursor = mydb.cursor()
-        mycursor.execute(f"select * from admin where id={session['user_id']}") if session['user_type'] == 'admin' else mycursor.execute(f"select * from customer where id={session['user_id']}")
+        try:
+            mycursor.execute(f"select * from admin where id={session.get('user_id')}") if session.get('user_type') == 'admin' else mycursor.execute(f"select * from customer where id={session.get('user_id')}")
+        except:
+            print()
         myresult = mycursor.fetchone()
         return myresult
     else:
@@ -67,13 +70,7 @@ def admin_register():
         hashed_pass = hash_password(password)
         mycursor = mydb.cursor()
         mycursor.execute(f"insert into admin(email,password,shop_name,last_name,first_name,shop_type,Mobile_number) values('{email}','{str(hashed_pass)}','{shop_name}','{lastname_admin}','{firstname_admin}','{shop_type_admin}','{mobile_admin}') ")  
-        mydb.commit()
-        flash("Admin account created successfully","success")
-        return redirect(url_for('admin_login'))
-    #elif request.method == 'GET' and not is_logged_in():
-    return render_template('admin_register.html')   
- #   else:
-  #      return redirect(url_for('home'))
+#      return redirect(url_for('home'))
 
 
 
@@ -109,6 +106,25 @@ def admin_home():
 
 
 
+
+@app.route('/customers', methods =['GET','POST'])
+def customers():
+    mycursor = mydb.cursor()
+    mycursor.execute(f'select * from customer_detail')
+    customers = mycursor.fetchall()
+    print(customers)
+    if len(customers) == 0:
+        flash('No customers present currently . Please create customer accounts', 'info')
+        return redirect(url_for('customer_register'))
+    #print(customers)
+    return render_template('customers.html', customers=customers)
+
+
+
+
+
+#bc sql ka query tha nikal diya ???? vapas daal varna hagega
+
 # Inventory routes here    
 
 @app.route('/add_to_inventory', methods = ['GET','POST'])
@@ -122,7 +138,7 @@ def add_to_inventory():
         buying_price = request.form['buying_price']
         selling_price = request.form['selling_price']
         mycursor = mydb.cursor()
-        mycursor.execute(f"Insert into inventory(stock,item_name,item_info,buying_price,selling_price,admin_id,Image_url) values({stock},'{item_name}','{item_info}',{buying_price},{selling_price},{session['user_id']},'{imageurl}') ")  
+        mycursor.execute(f"Insert into inventory(stock,item_name,item_info,buying_price,selling_price,admin_id,Image_url) values({stock},'{item_name}','{item_info}',{buying_price},{selling_price},{session.get('user_id')},'{imageurl}') ")  
         mydb.commit()
         return redirect(url_for('admin_home'))
     if request.method == 'GET' and is_admin():
@@ -156,6 +172,7 @@ def view_all_inventory():
     mycursor = mydb.cursor()
     mycursor.execute(f'select * from inventory') 
     inventories = mycursor.fetchall()
+    print(inventories)
     if len(inventories)==0:
         flash('No inventory present currently . Please add inventories','info')
         return redirect(url_for('add_to_inventory'))

@@ -58,17 +58,17 @@ position:absolute;
           <!-- Left -->
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-              <a class="nav-link waves-effect" href= "{{ url_for('home') }}">Home
+              <a class="nav-link " href= "{{ url_for('home') }}">Home
                 <span class="sr-only">(current)</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link waves-effect" href="https://mdbootstrap.com/docs/jquery/" target="_blank">About
+              <a class="nav-link " href="https://mdbootstrap.com/docs/jquery/" >About
                 Inventory</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link waves-effect" href="{{ url_for('add_to_inventory') }}"
-                target="_blank">Add to Inventory
+              <a class="nav-link" href="{{ url_for('add_to_inventory') }}"
+                >Add to Inventory
                 </a>
             </li>
             <li class="nav-item">
@@ -110,32 +110,47 @@ position:absolute;
         <img src="https://mdbootstrap.com/img/logo/mdb-email.png" class="img-fluid" alt="">
       </a>
 
-      <div class="list-group list-group-flush">
-        <a href="#" class="list-group-item active waves-effect">
-          <i class="fas fa-chart-pie mr-3"></i>Dashboard
-        </a>
-       <div >
+        <div class="list-group list-group-flush">
+          <a href="#" class="list-group-item active waves-effect">
+            <i class="fas fa-chart-pie mr-3"></i>Dashboard
+          </a>
+        <div>
           
           <div class="dropdown">
-            <i class="fas fa-chart-pie mr-3"></i>
+            
             <button class=" list-group-item list-group-item-action waves-effect" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="fas fa-chart-pie mr-3"></i>
+              <i class="fa fa-user-circle mr-3" ></i>
               Admin
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <a class="dropdown-item" href="#">Register</a>
-              <a class="dropdown-item" href="#">Login</a>
+              <a class="dropdown-item" href="{{ url_for('admin_register') }}">Register</a>
+              <a class="dropdown-item" href="{{ url_for('admin_login') }}">Login</a>
               
             </div>
           </div>
         </div>
 
+
+        <div class="dropdown">
+          
+          <button class=" list-group-item list-group-item-action waves-effect" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-user-friends mr-3"></i>
+            Customer
+          </button>
+         
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="{{ url_for('customer_register') }}">Register</a>
+            <a class="dropdown-item" href="{{ url_for('customer_login') }}">Login</a>
+            
+          </div>
+        </div>
+      </div>
+
         <a href="#" class="list-group-item list-group-item-action waves-effect">
-          <i class="fas fa-user mr-3"></i>Customer</a>
+          <i class="fas fa-user mr-3"></i>My Account</a>
         <a href="#" class="list-group-item list-group-item-action waves-effect">
           <i class="fas fa-table mr-3"></i>Tables</a>
-        <a href="/customers" class="list-group-item list-group-item-action waves-effect">
-          <i class="fas fa-user-friends mr-3"></i>My Account</a>
+        
         <a href="#" class="list-group-item list-group-item-action waves-effect">
           <i class="fas fa-money-bill-alt mr-3"></i>Orders</a>
       </div>

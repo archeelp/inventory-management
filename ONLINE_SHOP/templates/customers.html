@@ -57,27 +57,15 @@
 
                 <!-- Table body -->
                 <tbody>
+                  {% for x in customers %}
                   <tr>
-                    <th scope="row">1</th>
-                    <td>Cell 1</td>
-                    <td>Cell 2</td>
-                    <td>Cell 3</td>
-                    <td>Cell 4</td>
+                    <th scope="row">{{ x['customer_id'] }}</th>
+                    <td>{{ x['first_name'] }}</td>
+                    <td>{{ x['Last_name'] }}</td>
+                    <td>{{ x['mobile_number'] }}</td>
+                    <td>{{ x['address'] }}</td>
                   </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Cell 4</td>
-                    <td>Cell 5</td>
-                    <td>Cell 6</td>
-                    <td>Cell 4</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Cell 7</td>
-                    <td>Cell 8</td>
-                    <td>Cell 9</td>
-                    <td>Cell 4</td>
-                  </tr>
+                  {% endfor %}
                 </tbody>
                 <!-- Table body -->
               </table>
