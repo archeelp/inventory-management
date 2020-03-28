@@ -55,7 +55,7 @@ def admin_register():
     if request.method=='POST' and not is_logged_in():
         firstname_admin = request.form['firstname']
         lastname_admin = request.form['lastname']
-        shop_type_admin = request.form['shoptype']
+        shop_type_admin = request.form['shop_type']
         mobile_admin = request.form['mobile']
         email=request.form['email']
         shop_name = request.form['shop_name']   
@@ -114,16 +114,19 @@ def admin_home():
 @app.route('/add_to_inventory', methods = ['GET','POST'])
 def add_to_inventory():
     if request.method == 'POST' and is_admin() :
+        print(session)
         stock = request.form['stock']
         item_name = request.form['item_name']
         item_info = request.form['item_info']
+        imageurl = str(request.form['image_url'])
         buying_price = request.form['buying_price']
         selling_price = request.form['selling_price']
         mycursor = mydb.cursor()
-        mycursor.execute(f"Insert into inventory(stock,item_name,item_info,buying_price,selling_price,admin_id) values({stock},'{item_name}','{item_info}',{buying_price},{selling_price},{session['user_id']}) ")  
+        mycursor.execute(f"Insert into inventory(stock,item_name,item_info,buying_price,selling_price,admin_id,Image_url) values({stock},'{item_name}','{item_info}',{buying_price},{selling_price},{session['user_id']},'{imageurl}') ")  
         mydb.commit()
         return redirect(url_for('admin_home'))
     if request.method == 'GET' and is_admin():
+        print(session)
         return render_template('add_to_inventory.html')
     else:
         return redirect(url_for('home'))
@@ -145,6 +148,20 @@ def update_inventory(inventory_id):
 
     if request.method == 'GET':
             ...
+
+
+
+@app.route('/view_all_inventory', methods = ['GET','POST'])
+def view_all_inventory():
+    mycursor = mydb.cursor()
+    mycursor.execute(f'select * from inventory') 
+    inventories = mycursor.fetchall()
+    if len(inventories)==0:
+        flash('No inventory present currently . Please add inventories','info')
+        return redirect(url_for('add_to_inventory'))
+    return render_template('view_all_inventory.html',inventories=inventories)
+
+
 
 
 
@@ -252,8 +269,10 @@ def view_cart():
 @app.route('/logout',methods=['GET','POST'])
 def logout():
     if is_logged_in():
-        session = {}
+        session.pop('user_id')
+        session.pop('user_type')
         modified = True
+    print(session)
     return redirect(url_for('home'))
 
 #bottom
