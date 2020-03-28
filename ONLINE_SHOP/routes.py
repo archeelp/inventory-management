@@ -64,13 +64,14 @@ def admin_register():
         shop_name = request.form['shop_name']   
         password = request.form['password']
         confirm_password = request.form['confirm_password']
-        # if password != confirm_password:kya hua? comment kyu?
-        #     flash('Confirm password not matching the Password!','danger')
-        #     return redirect(url_for('admin_register'))
         hashed_pass = hash_password(password)
         mycursor = mydb.cursor()
         mycursor.execute(f"insert into admin(email,password,shop_name,last_name,first_name,shop_type,Mobile_number) values('{email}','{str(hashed_pass)}','{shop_name}','{lastname_admin}','{firstname_admin}','{shop_type_admin}','{mobile_admin}') ")  
-#      return redirect(url_for('home'))
+        return redirect(url_for('admin_login'))
+    elif request.method == 'GET':
+        return render_template('admin_register.html')
+    else:
+        return redirect(url_for('home'))
 
 
 
@@ -120,11 +121,6 @@ def customers():
     return render_template('customers.html', customers=customers)
 
 
-
-
-
-#bc sql ka query tha nikal diya ???? vapas daal varna hagega
-
 # Inventory routes here    
 
 @app.route('/add_to_inventory', methods = ['GET','POST'])
@@ -148,35 +144,47 @@ def add_to_inventory():
         return redirect(url_for('home'))
 
 
-@app.route('/update_inventory/<int:inventory_id>', methods =['GET','POST'])
+@app.route('/view_all_inventory/<int:inventory_id>', methods =['GET','POST'])
 def update_inventory(inventory_id):
     mycursor = mydb.cursor()
     mycursor.execute(f'select * from inventory where id={inventory_id}') 
     product = mycursor.fetchone()
     old_stock = product['stock']
+    #print(type(old_stock))
+    #print(product['Image_url'])
 
-    if request.method == 'POST':
+    if request.method == 'POST' and is_admin():
         new_stock = request.form['stock']
+        new_stock = int(new_stock)
         new_stock += old_stock
         mycursor = mydb.cursor()
         mycursor.execute(f'update inventory set stock={new_stock} where id={inventory_id}')
         mydb.commit()
+        return redirect(url_for('admin_home'))
+    if request.method == 'GET' and is_admin():
+        #print(session)
+        return render_template('update_inventory.html',inventory_id=inventory_id,product=product)
+    else:
+        return redirect(url_for('home'))
 
-    if request.method == 'GET':
-            ...
 
 
 
 @app.route('/view_all_inventory', methods = ['GET','POST'])
 def view_all_inventory():
-    mycursor = mydb.cursor()
-    mycursor.execute(f'select * from inventory') 
-    inventories = mycursor.fetchall()
-    print(inventories)
-    if len(inventories)==0:
-        flash('No inventory present currently . Please add inventories','info')
-        return redirect(url_for('add_to_inventory'))
-    return render_template('view_all_inventory.html',inventories=inventories)
+    if is_admin():
+        mycursor = mydb.cursor()
+        mycursor.execute(
+            f"select * from inventory where id={session.get('user_id')}")
+        inventories = mycursor.fetchall()
+        print(inventories)
+        if len(inventories)==0:
+            flash('No inventory present currently . Please add inventories','info')
+            return redirect(url_for('add_to_inventory'))
+        return render_template('view_all_inventory.html',inventories=inventories)
+    else:
+        flash('You dont have rights to view!','info')    
+        return redirect(url_for('home'))
 
 
 
@@ -231,7 +239,7 @@ def customer_login():
 
 @app.route('/customer_home',methods=['GET'])
 def customer_home():
-    if is_customer():
+    
         return render_template('dashboard.html')
         
 #cart related routes

@@ -1,0 +1,99 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+<body class="bg-gradient-primary">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div style="padding-left: 200px; width: 150px;" class="col-md-9 col-lg-12 col-xl-100">
+                <main>
+                    <div class="row">
+                        <div class="col-md-8">
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                            {% for category, message in messages %}
+                            <br><br>
+                            <div class="alert alert-{{ category }}">
+                                {{ message }}
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                </main>
+                <br>
+                <br>
+                <br>
+                <div class="card shadow-lg o-hidden border-0 my-5">
+                    <div class="card-body p-0">
+                        <div class="row">
+
+                            <div style="" class="col-lg-48 d-none d-lg-flex">
+                                <img style="width: 400px;"
+                                    src="https://vgnc.in/wp-content/uploads/2017/08/efficiently-manage-inventory-six-important-rules-min.jpg"
+                                    alt="">
+                                <div class="flex-grow-1 bg-register-image"></div>
+
+
+                                <div class="col-lg-7">
+                                    <div class="p-5">
+                                        <div class="text-center">
+                                            <h4 class="text-dark mb-4">Update an Inventory!</h4>
+                                        </div>
+                                        <form class="user" action="/view_all_inventory/{{inventory_id}}" method="POST">
+                                            <div class="form-group row">
+                                                <div class="col-sm-6 mb-3 mb-sm-0"><input
+                                                        class="form-control form-control-user" type="text"
+                                                        id="exampleFirstName" placeholder="Item Name" name="item_name" value="{{product['item_name']}}">
+                                                </div>
+                                                <div class="col-sm-6"><input class="form-control form-control-user"
+                                                        type="text" id="exampleFirstName" placeholder="Stock"
+                                                        name="stock" ></div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col-sm-12 mb-3 mb-sm-12"><input
+                                                        class="form-control form-control-user" type="text"
+                                                        placeholder="Item Information" name="item_info" value="{{product['item_info']}}">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col-sm-12"><input class="form-control form-control-user"
+                                                        type="text" id="exampleFirstName" placeholder="Image URL"
+                                                        name="image_url" value="{{product['Image_url']}}">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <div class="col-sm-6 mb-3 mb-sm-0"><input
+                                                        class="form-control form-control-user" type="text"
+                                                        id="examplePasswordInput" placeholder="Buying Price"
+                                                        name="buying_price" value="{{product['buying_price']}}">
+                                                </div>
+                                                <div class="col-sm-6"><input class="form-control form-control-user"
+                                                        type="text" id="exampleRepeatPasswordInput"
+                                                        placeholder="Selling Price" name="selling_price" value="{{product['selling_price']}}"></div>
+                                            </div><button class="btn btn-primary btn-block text-white btn-user"
+                                                type="submit">ADD</button>
+
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../static/js/jquery.min.js"></script>
+        <script src="../static/bootstrap/js/bootstrap.min.js"></script>
+        <script src="../static/js/chart.min.js"></script>
+        <script src="../static/js/bs-init.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"></script>
+        <script src="../static/js/theme.js"></script>
+</body>
+
+
+
+{% endblock content %}
