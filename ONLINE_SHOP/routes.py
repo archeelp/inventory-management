@@ -75,6 +75,8 @@ def admin_register():
 
 
 
+
+
 @app.route('/admin_login',methods=['GET','POST'])
 def admin_login():
     if request.method == 'POST' and not is_logged_in():
@@ -108,17 +110,27 @@ def admin_home():
 
 
 
-@app.route('/customers', methods =['GET','POST'])
+
+
+@app.route('/view_all_customers', methods =['GET','POST'])
 def customers():
-    mycursor = mydb.cursor()
-    mycursor.execute(f'select * from customer_detail')
-    customers = mycursor.fetchall()
-    print(customers)
-    if len(customers) == 0:
-        flash('No customers present currently . Please create customer accounts', 'info')
-        return redirect(url_for('customer_register'))
-    #print(customers)
-    return render_template('customers.html', customers=customers)
+    if is_logged_in() and is_admin():
+        mycursor = mydb.cursor()
+        mycursor.execute(f'select * from customer_detail')
+        customers = mycursor.fetchall()
+        print(customers)
+        if len(customers) == 0:
+            flash('No customers present currently . Please create customer accounts', 'info')
+            return redirect(url_for('customer_register'))
+        #print(customers)
+        return render_template('view_all_customers.html', customers=customers)
+
+    elif is_customer() and is_logged_in():
+        flash('A customer has rights to view his profile only!', 'info')
+        return redirect(url_for('customer_home'))
+    else :
+        return redirect(url_for('home'))
+
 
 
 # Inventory routes here    
@@ -136,12 +148,16 @@ def add_to_inventory():
         mycursor = mydb.cursor()
         mycursor.execute(f"Insert into inventory(stock,item_name,item_info,buying_price,selling_price,admin_id,Image_url) values({stock},'{item_name}','{item_info}',{buying_price},{selling_price},{session.get('user_id')},'{imageurl}') ")  
         mydb.commit()
+        flash('Inventory added successfully!','success')
         return redirect(url_for('admin_home'))
     if request.method == 'GET' and is_admin():
         print(session)
         return render_template('add_to_inventory.html')
     else:
+        flash('Only Admins can add an inventory!', 'info')
         return redirect(url_for('home'))
+
+
 
 
 @app.route('/view_all_inventory/<int:inventory_id>', methods =['GET','POST'])
@@ -157,15 +173,25 @@ def update_inventory(inventory_id):
         new_stock = request.form['stock']
         new_stock = int(new_stock)
         new_stock += old_stock
+
+        item_name = request.form['item_name']
+        item_info = request.form['item_info']
+        image_url = str(request.form['image_url'])
+        buying_price = request.form['buying_price']
+        selling_price = request.form['selling_price']
+
         mycursor = mydb.cursor()
-        mycursor.execute(f'update inventory set stock={new_stock} where id={inventory_id}')
+        mycursor.execute(f"update inventory set stock={new_stock}, item_name='{item_name}', item_info = '{item_info}', Image_url = '{image_url}' , buying_price = {buying_price}, selling_price = {selling_price} where id={inventory_id}")
         mydb.commit()
+        flash('Inventory has been updated successfully!','success')
         return redirect(url_for('admin_home'))
     if request.method == 'GET' and is_admin():
         #print(session)
         return render_template('update_inventory.html',inventory_id=inventory_id,product=product)
     else:
         return redirect(url_for('home'))
+
+
 
 
 
@@ -190,26 +216,25 @@ def view_all_inventory():
 
 
 
+
 #customer routes here
 @app.route('/customer_register',methods=['GET','POST'])
 def customer_register():
     if request.method=='POST' and not is_logged_in():
+        print(request.form)
         email_customer=request.form['email']
         password_customer=request.form['password']
         mobile_customer=request.form['mobile']
         address_customer=request.form['address']
-        # confirm_password = request.form['confirm_password']
-        # if password != confirm_password:
-        #     flash('Confirm password not matching the Password!','danger')
-        #     return redirect(url_for('customer_register'))
-        #implement this in frontend
-
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
         hashed_pass_customer = hash_password(password_customer)
-
+        print(first_name)
         mycursor = mydb.cursor()
-        mycursor.execute(f"Insert into customer(email,password) values('{email_customer}','{str(hashed_pass_customer)}') ")  
-        customer_id=mydb.session['id']
-        mycursor.execute(f"Insert into customer_details(mobile_number,address,customer_id) values('{mobile_customer}','{address_customer}',{customer_id}) ")  
+        mycursor.execute(f"Insert into customer(email,password) values('{email_customer}','{str(hashed_pass_customer)}') ")
+        mycursor.execute(f"select * from customer where email='{email_customer}'")
+        customer_id = mycursor.fetchone()['id']
+        mycursor.execute(f"Insert into customer_detail(first_name,last_name,mobile_number,address,customer_id) values('{first_name}', '{last_name}','{mobile_customer}','{address_customer}','{customer_id}') ")  
         mydb.commit()
         return redirect(url_for('customer_login'))
     elif request.method == 'GET':
@@ -218,13 +243,14 @@ def customer_register():
         return redirect(url_for('home'))
 
 
+
 @app.route('/customer_login',methods=['GET','POST'])
 def customer_login():
     if request.method == 'POST' and not is_logged_in():
         email = request.form['email']
         password = request.form['password']
         mycursor = mydb.cursor()
-        mycursor.execute(f"select * from customer where email={email}")
+        mycursor.execute(f"select * from customer where email='{email}'")
         expected = mycursor.fetchone()
         if compare_password(password, expected['password']):
             session['user_type'] = 'customer'
@@ -237,12 +263,69 @@ def customer_login():
     else:
         return redirect(url_for('home'))
 
+
+
+
 @app.route('/customer_home',methods=['GET'])
 def customer_home():
-    
-        return render_template('dashboard.html')
-        
+    if is_logged_in() and is_customer():
+        mycursor = mydb.cursor()
+        mycursor.execute(f" select * from customer_detail where customer_id = {session.get('user_id')}")
+        customer = mycursor.fetchone()
+        return render_template('customer_home.html',customer = customer)
+    elif is_logged_in() and is_admin():
+        return redirect(url_for('customers'))
+    else:
+        return redirect(url_for('home'))
+
+
+
+
+@app.route('/shops',methods=['GET','POST'])
+def shops():
+    if is_logged_in() and is_customer():
+        mycursor = mydb.cursor()
+        mycursor.execute(f" select * from admin ")
+        admin_shops  = mycursor.fetchall()
+        return render_template("shops.html",admin_shops = admin_shops)
+    elif is_logged_in() and is_admin():
+        return redirect(url_for('admin_home'))
+    else:
+        return redirect(url_for('home'))
+
+
+
+
+@app.route('/shops/<int:admin_id>', methods=['GET','POST'])
+def view_shop(admin_id):
+    mycursor = mydb.cursor()
+    mycursor.execute(f"select * from inventory where admin_id = {admin_id}")
+    admin_inventories = mycursor.fetchall()
+    print(admin_inventories)
+    mycursor = mydb.cursor()
+    mycursor.execute(f"select * from admin where id = {admin_id}")
+    admin = mycursor.fetchone()
+    return render_template('view_shop.html',admin_inventories=admin_inventories,admin=admin)
+
+
+
+#ek baar admin banke add , view , update check jaro inventory
+# id pe click karna for updste    
 #cart related routes
+
+@app.route('/add_to_cart',methods=['POST'])
+def add_to_cart():
+    if request.method == 'POST' and is_customer():
+        product_id = request.get_json()['product_id']
+        if not session['cart']:
+            session['cart'] = {}
+        else:
+            if 'product_id' not in session['cart']:
+                session['cart']['product_id'] = 0
+        session['cart'][product_id] += 1
+        return {'added':True}
+    return {'added':False}
+
 
 @app.route('/decrease_from_cart',methods=['POST'])
 def decrease_from_cart():
@@ -264,6 +347,7 @@ def decrease_from_cart():
         return {'decreased':False,'invalid':True}
 
 
+
 @app.route('/remove_from_cart',methods=['GET','POST'])
 def remove_from_cart():
     if request.method == 'POST' and is_customer():
@@ -277,10 +361,13 @@ def remove_from_cart():
             return {'removed':False,'invalid':False}
     return {'removed':False,'invalid':True}
 
+
+
 @app.route('/view_cart',methods=['GET'])
 def view_cart():
     if is_customer():
-        if session['cart']:
+        items = None
+        if 'cart' in session:
             items = (x for x in session['cart'])
             mycursor = mydb.cursor()
             mycursor.execute(f"select * from inventory where id in {items}")
@@ -289,6 +376,9 @@ def view_cart():
         return render_template('view_cart.html',items = items)
     else:
         return redirect(url_for('home'))
+
+
+
 
 #Logout
 @app.route('/logout',methods=['GET','POST'])
@@ -299,6 +389,10 @@ def logout():
         modified = True
     print(session)
     return redirect(url_for('home'))
+
+
+
+
 
 #bottom
 @app.context_processor
