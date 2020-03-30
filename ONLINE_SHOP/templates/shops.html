@@ -57,7 +57,7 @@
                     <td style="font-size: medium"><a  onmouseover="this.style.color='#0F0'"
                         onmouseout="this.style.color='#00F'"    href="{{ url_for('view_shop',admin_id=inv.id)}}">{{inv["shop_name"]}}</a></td>
                     <td style="font-size: medium;">{{inv["shop_type"]}}</td>
-                    <td style="font-size: medium;">{{inv["first_name"] + inv["last_name"]}}</td>
+                    <td style="font-size: medium;">{{inv["first_name"] +" "+ inv["last_name"]}}</td>
                     <td style="font-size: medium">{{inv["email"]}}</td>
                     <td style="font-size: medium"></td>
                     <td style="font-size: medium">{{inv["selling_price"]}}</td>

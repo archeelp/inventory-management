@@ -279,6 +279,26 @@ def customer_home():
         return redirect(url_for('home'))
 
 
+@app.route('/customer_orders')
+def customer_orders():
+    if not is_logged_in() and is_customer():
+        flash('Please login first!','info')
+        return redirect(url_for('customer_login'))
+
+    elif is_customer():
+        mycursor = mydb.cursor()
+        mycursor.execute(f"select * from orders where customer_id = {session.get('user_id')} and admin_id = (select admin_id from customer where id = {session.get('user_id')} )")
+        orders = mycursor.fetchall()
+        print(orders)
+        mycursor.execute(
+            f"select * from inventory where id in (select item_id from order_items where order_id in(select id from orders where customer_id = {session.get('user_id')} ))")
+        items = mycursor.fetchall()
+        print(items)
+        return render_template('customer_orders.html', orders = orders,items=items)
+    else:
+        return redirect(url_for('home'))
+
+
 
 
 @app.route('/shops',methods=['GET','POST'])
@@ -298,15 +318,20 @@ def shops():
 
 @app.route('/shops/<int:admin_id>', methods=['GET','POST'])
 def view_shop(admin_id):
-    mycursor = mydb.cursor()
-    mycursor.execute(f"select * from inventory where admin_id = {admin_id}")
-    admin_inventories = mycursor.fetchall()
-    print(admin_inventories)
-    mycursor = mydb.cursor()
-    mycursor.execute(f"select * from admin where id = {admin_id}")
-    admin = mycursor.fetchone()
-    return render_template('view_shop.html',admin_inventories=admin_inventories,admin=admin)
-
+    if is_customer() and is_logged_in():
+        mycursor = mydb.cursor()
+        mycursor.execute(f"select * from inventory where admin_id = {admin_id}")
+        admin_inventories = mycursor.fetchall()
+        
+        mycursor = mydb.cursor()
+        mycursor.execute(f"select * from admin where id = {admin_id}")
+        admin = mycursor.fetchone()
+        return render_template('view_shop.html',admin_inventories=admin_inventories,admin=admin)
+    elif is_customer():
+        flash('Please login first!','info')
+        return redirect(url_for('customer_login'))
+    else:
+        return redirect(url_for('home'))
 
 
 #ek baar admin banke add , view , update check jaro inventory
