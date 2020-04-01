@@ -279,7 +279,31 @@ def customer_home():
         return redirect(url_for('home'))
 
 
-@app.route('/customer_orders')
+
+@app.route('/payments', methods = ['GET','POST'])
+def payments():
+    if not is_logged_in() and is_customer():
+        flash('Please login first!', 'info')
+        return redirect(url_for('customer_login'))
+
+    elif is_customer() and request.method == 'POST':
+        card_number = request.form['card_number']
+        mycursor = mydb.cursor()
+        mycursor.execute(
+            f"insert into payment(customer_id,card_number) values({session.get('user_id')},{card_number})")
+        
+        # order and order_items me insert karna hai teko
+
+        flash('Payment done successfully!','success')
+        
+        return render_template('payments.html')
+    else:
+        return redirect(url_for('home'))
+
+
+
+
+
 def customer_orders():
     if not is_logged_in() and is_customer():
         flash('Please login first!','info')
@@ -323,6 +347,8 @@ def view_shop(admin_id):
         mycursor.execute(f"select * from inventory where admin_id = {admin_id}")
         admin_inventories = mycursor.fetchall()
         
+        print(admin_inventories)
+
         mycursor = mydb.cursor()
         mycursor.execute(f"select * from admin where id = {admin_id}")
         admin = mycursor.fetchone()

@@ -34,29 +34,14 @@
         <div class="card-body d-sm-flex justify-content-between">
 
           <h4 class="mb-2 mb-sm-0 pt-1">
-            <span>All Inventories</span>
+            <span>All Inventories by <b><u>{{ admin.first_name }} {{admin.last_name}}</u></b></span>
           </h4>
 
         </div>
 
       </div>
       <!-- Heading -->
-      <!--<div class="row text-center" style="display:flex; flex-wrap:wrap;">
-        {% for inv in admin_inventories %}
-        <div class="col-md-3 col-sm-6">
-            <div class="thumbnail">
-                <img src="{{ inv["Image_url"]}}">
-                <div class="caption">
-                    <h4>{{ inv["item_name"]}}</h4>
-                    <h6>Price:</h6>
-                    <span style="font-size: large;">{{ inv["selling_price"]}}</span>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-      </div>
-
-    -->
+      
     <div class="container">
  
         
@@ -68,13 +53,13 @@
          
             <div class="card cb">
          
-            <img class="card-img-top" src="{{ inv["Image_url"]}}" alt="{{ inv["item_name"]}}">
+            <img class="card-img-top" style="width: 350px; height: 300px; " src="{{inv.image_url}}"" alt="{{ inv["item_name"]}}">
          
               <div class="card-body text-center">
          
                 <h5 class="card-title cd">{{ inv["item_name"]}}</h5>
          
-                <p class="card-text text-left">Price:<span class="a-price-whole">{{ inv["selling_price"]}}</span> </p>
+                <p style="padding-bottom: 10px;" class="card-text text-left">Price:<span class="a-price-whole">{{ inv["selling_price"]}}</span> </p>
          
                 
          

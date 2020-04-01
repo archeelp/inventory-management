@@ -36,11 +36,16 @@
                 <div class="card shadow-lg o-hidden border-0 my-5">
                     <div class="card-body p-0">
                         <div class="row">
+                        <div class="col-lg-5 d-none d-lg-flex">
+                            <img src="../static/img/signup-image.jpg"  alt="">
+                            <div class="flex-grow-1 bg-register-image"></div>
+                        </div>
                             <div class="col-lg-7">
                                 <div class="p-5">
                                     <div class="text-center">
                                         <h4 class="text-dark mb-4">Sign In!!</h4>
                                     </div>
+                                    
                                     <form class="user" action="{{ url_for('admin_login') }}" method="POST">
 
                                       
@@ -69,6 +74,7 @@
                                             role="button"><i class="fab fa-facebook-f"></i>&nbsp; Register with
                                             Facebook</a>
                                         <hr>
+                                        
                                     </form>
                                     <div class="text-center"><a class="small" href="{{url_for('admin_register')}}">Don't have an Account!Register here</a></div>
                                 </div>
