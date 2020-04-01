@@ -60,9 +60,10 @@
                 <h5 class="card-title cd">{{ inv["item_name"]}}</h5>
          
                 <p style="padding-bottom: 10px;" class="card-text text-left">Price:<span class="a-price-whole">{{ inv["selling_price"]}}</span> </p>
-         
-                
-         
+                <p>id : {{inv["id"]}}</p> 
+                <button class="btn btn-primary btn-success" onclick="addtocart( {{ inv["id"] }} );">Add</button>
+                <button class="btn btn-primary btn-info" onclick="decreasefromcart( {{ inv["id"] }} );">Decrease</button>
+                <button class="btn btn-primary btn-danger" onclick="removefromcart( {{ inv["id"] }} );">Remove</button>
               </div>
          
             </div>
@@ -72,7 +73,53 @@
     </div>
 
     </main>
-
+<script>
+  function addtocart(a){
+    $.ajax({
+                 type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({'product_id':a}),
+                dataType: 'json',
+                url: 'http://localhost:3000/add_to_cart',
+                success: function (e) {
+                    console.log(e);
+                },
+                error: function(error) {
+                console.log(error);
+            }
+            });
+  };
+  function decreasefromcart(a){
+    $.ajax({
+                 type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({'product_id':a}),
+                dataType: 'json',
+                url: 'http://localhost:3000/decrease_from_cart',
+                success: function (e) {
+                    console.log(e);
+                },
+                error: function(error) {
+                console.log(error);
+            }
+            });
+  };
+  function removefromcart(a){
+    $.ajax({
+                 type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({'product_id':a}),
+                dataType: 'json',
+                url: 'http://localhost:3000/remove_from_cart',
+                success: function (e) {
+                    console.log(e);
+                },
+                error: function(error) {
+                console.log(error);
+            }
+            });
+  }
+</script>
 
 
 {% endblock content %}

@@ -7,7 +7,7 @@ app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 mydb = pymysql.connect(
   host="localhost",
   user="root",
-  password="Aditya@22",
+  password="Arch1234*",
   database="dbms_project",
   cursorclass=pymysql.cursors.DictCursor
 )

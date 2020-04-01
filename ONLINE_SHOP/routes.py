@@ -367,13 +367,15 @@ def view_shop(admin_id):
 @app.route('/add_to_cart',methods=['POST'])
 def add_to_cart():
     if request.method == 'POST' and is_customer():
-        product_id = request.get_json()['product_id']
-        if not session['cart']:
+        product_id = str(request.json['product_id'])
+        if not session.get('cart'):
             session['cart'] = {}
-        else:
-            if 'product_id' not in session['cart']:
-                session['cart']['product_id'] = 0
+        if product_id not in session['cart']:
+            session['cart'][product_id] = 0
         session['cart'][product_id] += 1
+        print(session['cart'][product_id])
+        session.modified = True
+        print(session['cart'])
         return {'added':True}
     return {'added':False}
 
@@ -381,7 +383,7 @@ def add_to_cart():
 @app.route('/decrease_from_cart',methods=['POST'])
 def decrease_from_cart():
     if request.method == 'POST' and is_customer():
-        product_id = request.get_json()['product_id']
+        product_id = str(request.json['product_id'])
         if session['cart']:
             if product_id in session['cart']:
                 session['cart'][product_id] -= 1
@@ -402,7 +404,7 @@ def decrease_from_cart():
 @app.route('/remove_from_cart',methods=['GET','POST'])
 def remove_from_cart():
     if request.method == 'POST' and is_customer():
-        product_id = request.get_json()['product_id']
+        product_id = str(request.json['product_id'])
         if product_id in session['cart']:
             session['cart'].pop(product_id)
             is_cart_empty()
@@ -421,10 +423,38 @@ def view_cart():
         if 'cart' in session:
             items = (x for x in session['cart'])
             mycursor = mydb.cursor()
-            mycursor.execute(f"select * from inventory where id in {items}")
+            st = "select * from inventory where id in ("
+            st += ", ".join(items)
+            st += ");"
+            print(st)
+            mycursor.execute(st)
             result = mycursor.fetchall()
-            items = [(x,session['cart'][x['id']]) for x in result]
+            print(result)
+            items = [(x,session['cart'][str(x['id'])]) for x in result]
         return render_template('view_cart.html',items = items)
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/checkout',methods=['GET'])
+def view_cart():
+    if is_customer():
+        items = None
+        if 'cart' in session:
+            items = (x for x in session['cart'])
+            mycursor = mydb.cursor()
+            st = "select * from inventory where id in ("
+            st += ", ".join(items)
+            st += ");"
+            print(st)
+            mycursor.execute(st)
+            result = mycursor.fetchall()
+            print(result)
+            items = [(x,session['cart'][str(x['id'])]) for x in result]
+            #items is the list of tupple with the product at first index and its quantity at second index
+            #iske aage registering ka code likh do tum and vo view_cart vala ui hag raha hai because of mdb template
+        flash("Checked out successfully","success")
+        return render_template('home.html',items = items)
     else:
         return redirect(url_for('home'))
 
