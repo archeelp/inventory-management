@@ -53,14 +53,14 @@
          
             <div class="card cb">
          
-            <img class="card-img-top" style="width: 350px; height: 300px; " src="{{inv.image_url}}"" alt="{{ inv["item_name"]}}">
+            <img class="card-img-top" style="width: 80%; height: 150px; padding-left: 35px;" src="{{inv.image_url}}"" alt="{{ inv["item_name"]}}">
          
               <div class="card-body text-center">
          
                 <h5 class="card-title cd">{{ inv["item_name"]}}</h5>
          
                 <p style="padding-bottom: 10px;" class="card-text text-left">Price:<span class="a-price-whole">{{ inv["selling_price"]}}</span> </p>
-                <p>id : {{inv["id"]}}</p> 
+                
                 <button class="btn btn-primary btn-success" onclick="addtocart( {{ inv["id"] }} );">Add</button>
                 <button class="btn btn-primary btn-info" onclick="decreasefromcart( {{ inv["id"] }} );">Decrease</button>
                 <button class="btn btn-primary btn-danger" onclick="removefromcart( {{ inv["id"] }} );">Remove</button>
@@ -69,6 +69,9 @@
             </div>
          
           </div>
+
+
+        
           {% endfor %}
     </div>
 

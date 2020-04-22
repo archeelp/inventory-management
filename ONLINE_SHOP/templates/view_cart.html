@@ -1,12 +1,12 @@
 {% extends "customer_layout.html" %}
 {% block content %}
-<div class="container">
+<div class="container" style="text-align: center; padding-top: 100px;padding-left: 120px;">
     <div class="row">
         <div class="col-sm-12 col-md-10 col-md-offset-1">
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Product</th>
+                        <th style="padding-left: 70px;">Product</th>
                         <th>Quantity</th>
                         <th class="text-center">Price</th>
                         <th class="text-center">Total</th>
@@ -18,7 +18,7 @@
                     <tr>
                         <td class="col-sm-8 col-md-6">
                         <div class="media">
-                            <a class="thumbnail pull-left" href="#"> <img class="media-object" src="http://icons.iconarchive.com/icons/custom-icon-design/flatastic-2/72/product-icon.png" style="width: 72px; height: 72px;"> </a>
+                            <a class="thumbnail pull-left" href="#"> <img class="media-object" src="{{item[0].image_url}}" style="width: 72px; height: 72px;"> </a>
                             <div class="media-body">
                                 <h4 class="media-heading"><a href="#">{{item[0]['item_name']}}</a></h4>
                                 <h5 class="media-heading"> by <a href="#">{{item[0]['item_info']}}</a></h5>
@@ -39,7 +39,7 @@
                 </tbody>
             </table>
             <div>
-                <button class="btn btn-default" href="/checkout">Checkout</button>
+                <button type="button" class="btn btn-default" href="/customer_home">Checkout</button>
             </div>
         </div>
     </div>
@@ -55,12 +55,12 @@
                 url: 'http://localhost:3000/remove_from_cart',
                 success: function (e) {
                     console.log(e);
+                    window.location.reload();
                 },
                 error: function(error) {
                 console.log(error);
             }
             });
-            window.location.reload();
     }
 </script>
 

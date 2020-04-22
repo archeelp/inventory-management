@@ -51,15 +51,30 @@
 
                 <!-- Table body -->
                 <tbody>
+                  {% if customer %}
+                    <a href="{{url_for('customer_home')}}"><p>Click here to return to home page</p></a> 
+                  {% endif %}
                     {% for inv in inventories%}
+                    {% if customer %}
+                    <tr>
+                      <th scope="row" style="font-size: medium"><a
+                          href="{{url_for('customer_home')}}">{{inv["id"]}}</a></th>
+                      <td> <img src={{inv.image_url}} alt="No image" style="width: 85px;height: 75px;"></td>
+                      <td style="font-size: medium;">{{inv["item_name"]}}</td>
+                      <td style="font-size: medium">{{inv["stock"]}}</td>
+                      <td style="font-size: medium">{{inv["buying_price"]}}</td>
+                      <td style="font-size: medium">{{inv["selling_price"]}}</td>
+                    </tr>
+                    {% else %}  
                   <tr>
                     <th scope="row" style="font-size: medium"><a href="{{url_for('update_inventory',inventory_id=inv.id)}}">{{inv["id"]}}</a></th>
-                    <td> <img src={{inv["Image_url"]}} alt="No image" style="width: 85px;height: 75px;"></td>
+                    <td> <img src={{inv.Image_url}} alt="No image" style="width: 85px;height: 75px;"></td>
                     <td style="font-size: medium;">{{inv["item_name"]}}</td>
                     <td style="font-size: medium">{{inv["stock"]}}</td>
                     <td style="font-size: medium">{{inv["buying_price"]}}</td>
                     <td style="font-size: medium">{{inv["selling_price"]}}</td>
                   </tr>
+                  {% endif %}
                   {% endfor %}
                   
                 </tbody>

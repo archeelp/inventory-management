@@ -1,4 +1,4 @@
-from flask import render_template, redirect, session, url_for, request , flash
+from flask import render_template, redirect, session, url_for, request , flash,jsonify
 import pymysql
 from datetime import date, datetime
 import smtplib
@@ -46,6 +46,10 @@ count = 0
 @app.route('/')
 def home():
     return render_template('dashboard.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')    
 
 @app.route("/tables")
 def tables():
@@ -208,6 +212,13 @@ def view_all_inventory():
             flash('No inventory present currently . Please add inventories','info')
             return redirect(url_for('add_to_inventory'))
         return render_template('view_all_inventory.html',inventories=inventories)
+    elif is_customer():
+        mycursor = mydb.cursor()
+        mycursor.execute(
+            f"select * from inventory where admin_id = (select admin_id from customer where id = {session.get('user_id')} )")
+        inventories = mycursor.fetchall()
+        customer =1 
+        return render_template('view_all_inventory.html', inventories=inventories,customer = customer)
     else:
         flash('You dont have rights to view!','info')    
         return redirect(url_for('home'))
@@ -274,8 +285,11 @@ def customer_home():
         customer = mycursor.fetchone()
         return render_template('customer_home.html',customer = customer)
     elif is_logged_in() and is_admin():
+        flash('You are not a registered customer!','danger')
         return redirect(url_for('customers'))
+    
     else:
+        flash('You have not registered!','danger')
         return redirect(url_for('home'))
 
 
@@ -303,7 +317,7 @@ def payments():
 
 
 
-
+@app.route('/customer_orders',methods=['GET','POST'])
 def customer_orders():
     if not is_logged_in() and is_customer():
         flash('Please login first!','info')
@@ -375,9 +389,9 @@ def add_to_cart():
         session['cart'][product_id] += 1
         print(session['cart'][product_id])
         session.modified = True
-        print(session['cart'])
-        return {'added':True}
-    return {'added':False}
+        print(product_id)
+        return jsonify({'added':True})
+    return jsonify({'added':False})
 
 
 @app.route('/decrease_from_cart',methods=['POST'])
@@ -391,13 +405,13 @@ def decrease_from_cart():
                     session['cart'].pop(product_id)
                 session.modified = True
                 is_cart_empty()
-                return {'decreased':True,'invalid':False}
+                return jsonify({'decreased':True,'invalid':False})
             else:
-                return {'decreased':False,'invalid':False}
+                return jsonify({'decreased':False,'invalid':False})
         else:
-            return {'decreased':False,'invalid':True}
+            return jsonify({'decreased':False,'invalid':True})
     else:
-        return {'decreased':False,'invalid':True}
+        return jsonify({'decreased':False,'invalid':True})
 
 
 
@@ -409,10 +423,10 @@ def remove_from_cart():
             session['cart'].pop(product_id)
             is_cart_empty()
             session.modified = True
-            return {'removed':True,'invalid':False}
+            return jsonify({'removed':True,'invalid':False})
         else:
-            return {'removed':False,'invalid':False}
-    return {'removed':False,'invalid':True}
+            return jsonify({'removed':False,'invalid':False})
+    return jsonify({'removed':False,'invalid':True})
 
 
 
@@ -431,13 +445,16 @@ def view_cart():
             result = mycursor.fetchall()
             print(result)
             items = [(x,session['cart'][str(x['id'])]) for x in result]
+        else:
+            flash('Cart is empty. Please add items','info')
+            return redirect(url_for('customer_home'))    
         return render_template('view_cart.html',items = items)
     else:
         return redirect(url_for('home'))
 
 
-@app.route('/checkout',methods=['GET'])
-def view_cart():
+@app.route('/checkout',methods=['GET','POST'])
+def checkout():
     if is_customer():
         items = None
         if 'cart' in session:
@@ -451,12 +468,55 @@ def view_cart():
             result = mycursor.fetchall()
             print(result)
             items = [(x,session['cart'][str(x['id'])]) for x in result]
+            admin_id = result[0]["admin_id"]
+
+            # yaha pe bas 2 queries likde order and order_items ka 
+            # first take only the card_number from form then insert into payment
+            # payment ka route me sab code hai
+            # then 2 inserts and then orders wala html page banao ..
+
             #items is the list of tupple with the product at first index and its quantity at second index
             #iske aage registering ka code likh do tum and vo view_cart vala ui hag raha hai because of mdb template
-        flash("Checked out successfully","success")
-        return render_template('home.html',items = items)
-    else:
-        return redirect(url_for('home'))
+            
+            
+            if request.method=="POST" and is_logged_in():
+                card_number = request.form['card_number']
+                mycursor = mydb.cursor()
+                mycursor.execute(f"insert into payment(customer_id,card_number)values('{session.get('user_id')}','{card_number}')")
+                mydb.commit()
+                mycursor.execute('SELECT last_insert_id()')
+                payment_id = mycursor.fetchone()
+                # print(payment_id)
+                # print(payment_id['last_insert_id()'])
+                
+                
+                
+                mycursor.execute(f"insert into orders(customer_id,admin_id,payment,payment_id)values('{session.get('user_id')}','{admin_id}','{1}','{payment_id['last_insert_id()']}')")
+                mycursor.execute('SELECT last_insert_id()')
+                order_id = mycursor.fetchone()
+                mydb.commit()
+
+
+                for i in items:
+                    # print("i is :" ,i)
+                    # print("0 is :",i[0])
+                    # print(i[1])
+                    mycursor.execute(f"insert into order_items(item_id,order_id,quantity)values('{i[0]['id']}','{order_id['last_insert_id()']}','{i[1]}')")
+                    mydb.commit()
+                flash("Checked out successfully","success")
+                return redirect(url_for('customer_home')) 
+                
+            elif not is_logged_in():
+                return redirect(url_for('home'))
+            
+            return render_template('checkout.html',items = items)
+                
+
+
+
+            
+    
+        
 
 
 

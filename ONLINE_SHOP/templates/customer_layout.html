@@ -46,9 +46,9 @@ position:absolute;
       <div class="container-fluid" style="background-color: #000011;">
 
         <!-- Brand -->
-        <a class="navbar-brand waves-effect" href="https://mdbootstrap.com/docs/jquery/" >
+        <!-- <a class="navbar-brand waves-effect" href="https://mdbootstrap.com/docs/jquery/" >
           <strong class="blue-text">Inventory</strong>
-        </a>
+        </a> -->
 
         <!-- Collapse -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -62,7 +62,7 @@ position:absolute;
           <!-- Left -->
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-              <a class="nav-link " href= "{{ url_for('home') }}">Home
+              <a class="nav-link " href= "{{ url_for('customer_home') }}">Home
                 <span class="sr-only">(current)</span>
               </a>
             </li>
@@ -70,33 +70,42 @@ position:absolute;
               <a class="nav-link " href="{{ url_for('shops') }}" >Shops
               </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a class="nav-link" href="{{ url_for('add_to_inventory') }}"
                 >Add to Inventory
                 </a>
-            </li>
+            </li> -->
             <li class="nav-item">
-              <a class="nav-link waves-effect" href="" target="_blank">View Inventory
+              <a class="nav-link waves-effect" href="{{url_for('view_all_inventory')}}" >View Inventory
                 </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link waves-effect" href="{{url_for('view_cart')}}">Cart
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " href="{{ url_for('logout') }}">Logout
+              </a>
+            </li>
           </ul>
+          
 
           <!-- Right -->
           <ul class="navbar-nav nav-flex-icons">
             <li class="nav-item">
-              <a href="https://www.facebook.com/mdbootstrap" class="nav-link waves-effect" target="_blank">
+              <a href="https://www.facebook.com/" class="nav-link waves-effect" >
                 <i class="fab fa-facebook-f"></i>
               </a>
             </li>
             <li class="nav-item">
-              <a href="https://twitter.com/MDBootstrap" class="nav-link waves-effect" target="_blank">
+              <a href="https://twitter.com/" class="nav-link waves-effect" >
                 <i class="fab fa-twitter"></i>
               </a>
             </li>
             <li class="nav-item">
-              <a href="https://github.com/mdbootstrap/bootstrap-material-design" class="nav-link border border-light rounded waves-effect"
+              <a href="https://github.com/PatkarAditya22/inventory-management" class="nav-link border border-light rounded waves-effect"
                 target="_blank">
-                <i class="fab fa-github mr-2"></i>MDB GitHub
+                <i class="fab fa-github mr-2"></i>INV GitHub
               </a>
             </li>
           </ul>
@@ -120,7 +129,7 @@ position:absolute;
           </a>
           <a href="#" class="list-group-item list-group-item-action waves-effect">
             <i class="fas fa-user mr-3"></i>My Account</a>
-          <a href="#" class="list-group-item list-group-item-action waves-effect">
+          <a href="{{url_for('customer_orders')}}" class="list-group-item list-group-item-action waves-effect">
             <i class="fas fa-table mr-3"></i>My Orders</a>
           
           <a href="#" class="list-group-item list-group-item-action waves-effect">
@@ -133,7 +142,24 @@ position:absolute;
 
   </header>
   <!--Main Navigation-->
-
+  <main>
+    <div class="row">
+      <div class="col-md-8">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <br><br>
+        <div class="alert alert-{{ category }}" style="text-align: center;">
+          {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+  
+      </div>
+  
+    </div>
+  </main>
   <!--Main layout-->
   {% block content %}
   {% endblock %}
@@ -164,9 +190,9 @@ position:absolute;
     var myChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+        labels: ["Samsung S10", "Airpods", "Lg Fridge", "Aftron TV", "GShock Watch", "Koovs Sneakers"],
         datasets: [{
-          label: '# of Votes',
+          label: '# of Orders',
           data: [12, 19, 3, 5, 2, 3],
           backgroundColor: [
             'rgba(255, 99, 132, 0.2)',
@@ -203,7 +229,7 @@ position:absolute;
     var myPieChart = new Chart(ctxP, {
       type: 'pie',
       data: {
-        labels: ["Red", "Green", "Yellow", "Grey", "Dark Grey"],
+        labels: ["Airpods", "Samsung S10", "Lg Fridge", "Aftron TV", "GShock Watch"],
         datasets: [{
           data: [300, 50, 100, 40, 120],
           backgroundColor: ["#F7464A", "#46BFBD", "#FDB45C", "#949FB1", "#4D5360"],
@@ -358,6 +384,137 @@ position:absolute;
     });
 
   </script>
+  <script>
+    window.onload = function () {
+
+var chart = new CanvasJS.Chart("dChartContainer", {
+	animationEnabled: true,
+	title:{
+		text: "Stocks you bought",
+		horizontalAlign: "left"
+	},
+	data: [{
+		type: "doughnut",
+		startAngle: 60,
+		//innerRadius: 60,
+		indexLabelFontSize: 17,
+		indexLabel: "{label} - #percent%",
+		toolTipContent: "<b>{label}:</b> {y} (#percent%)",
+		dataPoints: [
+			{ y: 67, label: "Samsung Buds" },
+			{ y: 28, label: "LG TV" },
+			{ y: 10, label: "DVD Recorder" },
+			{ y: 7, label: "PS4"},
+			{ y: 15, label: "LG Washing Machine"},
+			{ y: 6, label: "iPhone 7"}
+		]
+	}]
+});
+chart.render();
+
+var chart2 = new CanvasJS.Chart("historyChart", {
+	theme:"light2",
+	animationEnabled: true,
+	title:{
+		text: "Performance of various shops"
+	},
+	axisY :{
+		includeZero: false,
+		title: "Stocks Value",
+		suffix: ""
+	},
+	toolTip: {
+		shared: "true"
+	},
+	legend:{
+		cursor:"pointer",
+		itemclick : toggleDataSeries
+	},
+	data: [
+	{
+		type: "spline", 
+		showInLegend: true,
+		yValueFormatString: "",
+		name: "Wolfrom",
+		dataPoints: [
+			{ label: "Ep. 1", y: 6 },
+			{ label: "Ep. 2", y: 4 },
+			{ label: "Ep. 3", y: 3 },
+			{ label: "Ep. 4", y: 5 },
+			{ label: "Ep. 5", y: 6 },
+			{ label: "Ep. 6", y: 5 },
+			{ label: "Ep. 7", y: 8 },
+			{ label: "Ep. 8", y: 9 },
+			{ label: "Ep. 9", y: 9 },
+			{ label: "Ep. 10", y: 10 }
+		]
+	},
+	{
+		type: "spline", 
+		showInLegend: true,
+		yValueFormatString: "",
+		name: "Energizer",
+		dataPoints: [
+			{ label: "Ep. 1", y: 8 },
+			{ label: "Ep. 2", y: 6 },
+			{ label: "Ep. 3", y: 6 },
+			{ label: "Ep. 4", y: 6 },
+			{ label: "Ep. 5", y: 6 },
+			{ label: "Ep. 6", y: 6 },
+			{ label: "Ep. 7", y: 5 },
+			{ label: "Ep. 8", y: 7 },
+			{ label: "Ep. 9", y: 7 },
+			{ label: "Ep. 10", y: 8 }
+		]
+	},
+	{
+		type: "spline", 
+		showInLegend: true,
+		yValueFormatString: "",
+		name: "Xiaomi",
+		dataPoints: [
+			{ label: "Ep. 1", y: 7 },
+			{ label: "Ep. 2", y: 7 },
+			{ label: "Ep. 3", y: 7 },
+			{ label: "Ep. 4", y: 7 },
+			{ label: "Ep. 5", y: 7 },
+			{ label: "Ep. 6", y: 6 },
+			{ label: "Ep. 7", y: 7 },
+			{ label: "Ep. 8", y: 7 },
+			{ label: "Ep. 9", y: 7 },
+			{ label: "Ep. 10", y: 8 }
+		]
+	},
+	{
+		type: "spline", 
+		showInLegend: true,
+		yValueFormatString: "",
+		name: "Highlander",
+		dataPoints: [
+			{ label: "Ep. 1", y: 10 },
+			{ label: "Ep. 2", y: 9 },
+			{ label: "Ep. 3", y: 9 },
+			{ label: "Ep. 4", y: 10 },
+			{ label: "Ep. 5", y: 10 },
+			{ label: "Ep. 6", y: 10 },
+			{ label: "Ep. 7", y: 12 }
+		]
+	}]
+});
+chart2.render();
+
+function toggleDataSeries(e) {
+	if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible ){
+		e.dataSeries.visible = false;
+	} else {
+		e.dataSeries.visible = true;
+	}
+	chart2.render();
+}
+
+}
+  </script>
+  <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 </body>
 
 </html>

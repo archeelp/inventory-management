@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Material Design Bootstrap</title>
+  <title>Inventory Management</title>
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
   <!-- Bootstrap core CSS -->
@@ -44,9 +44,9 @@ position:absolute;
       <div class="container-fluid">
 
         <!-- Brand -->
-        <a class="navbar-brand waves-effect" href="https://mdbootstrap.com/docs/jquery/" >
+        <!-- <a class="navbar-brand waves-effect" href="https://mdbootstrap.com/docs/jquery/" >
           <strong class="blue-text">Inventory</strong>
-        </a>
+        </a> -->
 
         <!-- Collapse -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -65,8 +65,8 @@ position:absolute;
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link " href="https://mdbootstrap.com/docs/jquery/" >About
-                Inventory</a>
+              <a class="nav-link " href="{{url_for('about')}}" >About
+                Us</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('add_to_inventory') }}"
@@ -74,27 +74,32 @@ position:absolute;
                 </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link waves-effect" href="" target="_blank">View Inventory
+              <a class="nav-link waves-effect" href="{{url_for('view_all_inventory')}}" >View Inventory
                 </a>
+            </li>
+            
+            <li class="nav-item">
+              <a class="nav-link " href="{{ url_for('logout') }}">Logout
+              </a>
             </li>
           </ul>
 
           <!-- Right -->
           <ul class="navbar-nav nav-flex-icons">
             <li class="nav-item">
-              <a href="https://www.facebook.com/mdbootstrap" class="nav-link waves-effect" target="_blank">
+              <a href="https://www.facebook.com/" class="nav-link waves-effect" >
                 <i class="fab fa-facebook-f"></i>
               </a>
             </li>
             <li class="nav-item">
-              <a href="https://twitter.com/MDBootstrap" class="nav-link waves-effect" target="_blank">
+              <a href="https://twitter.com/" class="nav-link waves-effect" >
                 <i class="fab fa-twitter"></i>
               </a>
             </li>
             <li class="nav-item">
-              <a href="https://github.com/mdbootstrap/bootstrap-material-design" class="nav-link border border-light rounded waves-effect"
+              <a href="https://github.com/PatkarAditya22/inventory-management" class="nav-link border border-light rounded waves-effect"
                 target="_blank">
-                <i class="fab fa-github mr-2"></i>MDB GitHub
+                <i class="fab fa-github mr-2"></i>INV GitHub
               </a>
             </li>
           </ul>
@@ -164,8 +169,29 @@ position:absolute;
   <!--Main Navigation-->
 
   <!--Main layout-->
-  {% block content %}
-  {% endblock %}
+ 
+  <main>
+    <div class="row">
+      <div class="col-md-8">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <br><br>
+        <div class="alert alert-{{ category }}" style="text-align: center;">
+          {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        
+      </div>
+      
+    </div>
+  </main>
+  <div style="padding-top: -50px;">
+    {% block content %}
+    {% endblock %}
+  </div>
   <!--Main layout-->
 
   
@@ -193,9 +219,9 @@ position:absolute;
     var myChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+        labels: ["Samsung S10", "Airpods", "Lg Fridge", "Aftron TV", "GShock Watch", "Koovs Sneakers"],
         datasets: [{
-          label: '# of Votes',
+          label: '# of Orders',
           data: [12, 19, 3, 5, 2, 3],
           backgroundColor: [
             'rgba(255, 99, 132, 0.2)',
@@ -232,7 +258,7 @@ position:absolute;
     var myPieChart = new Chart(ctxP, {
       type: 'pie',
       data: {
-        labels: ["Red", "Green", "Yellow", "Grey", "Dark Grey"],
+        labels: ["Airpods", "Samsung S10", "Lg Fridge", "Aftron TV", "GShock Watch"],
         datasets: [{
           data: [300, 50, 100, 40, 120],
           backgroundColor: ["#F7464A", "#46BFBD", "#FDB45C", "#949FB1", "#4D5360"],

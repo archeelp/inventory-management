@@ -2,8 +2,246 @@
 {% block content %}
 
 
+<!--Main layout-->
+<main class="pt-5 mx-lg-5">
+    <div class="container-fluid mt-5">
 
+      <!--Grid row-->
+      <div class="row wow fadeIn">
 
+        <!--Grid column-->
+        <div class="col-md-9 mb-4">
+
+          <!--Card-->
+          <div class="card">
+
+            <!--Card content-->
+            <div class="card-body">
+              Popular Inventory
+              <!-- Table  -->
+              <table class="table table-hover">
+                <!-- Table head -->
+                <thead class="blue-grey lighten-4">
+                  <tr>
+                    <th>#</th>
+                    <th>Item</th>
+                    <th>Cost Price</th>
+                    <th>Selling Price</th>
+                  </tr>
+                </thead>
+                <!-- Table head -->
+
+                <!-- Table body -->
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>Airpods</td>
+                    <td>8000</td>
+                    <td>12000</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>Samsung S10</td>
+                    <td>45000</td>
+                    <td>56799</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>Aftron TV</td>
+                    <td>12000</td>
+                    <td>25000</td>
+                  </tr>
+                </tbody>
+                <!-- Table body -->
+              </table>
+              <!-- Table  -->
+
+            </div>
+
+          </div>
+          <!--/.Card-->
+
+        </div>
+        <!--Grid column-->
+
+        <!--Grid column-->
+        <div class="col-md-3 mb-4">
+
+          <!--Card-->
+          <div class="card mb-4">
+
+            <!--Card content-->
+            <div class="card-body">
+
+              <!-- List group links -->
+              <div class="list-group list-group-flush">
+                <a class="list-group-item list-group-item-action waves-effect">Sales
+                  <span class="badge badge-success badge-pill pull-right">22%
+                    <i class="fas fa-arrow-up ml-1"></i>
+                  </span>
+                </a>
+                <a class="list-group-item list-group-item-action waves-effect">Traffic
+                  <span class="badge badge-danger badge-pill pull-right">5%
+                    <i class="fas fa-arrow-down ml-1"></i>
+                  </span>
+                </a>
+                <a class="list-group-item list-group-item-action waves-effect">Orders
+                  <span class="badge badge-primary badge-pill pull-right">14</span>
+                </a>
+                <a class="list-group-item list-group-item-action waves-effect">Issues
+                  <span class="badge badge-primary badge-pill pull-right">123</span>
+                </a>
+                <a class="list-group-item list-group-item-action waves-effect">Messages
+                  <span class="badge badge-primary badge-pill pull-right">8</span>
+                </a>
+              </div>
+              <!-- List group links -->
+
+            </div>
+
+          </div>
+          <!--/.Card-->
+
+        </div>
+        <!--Grid column-->
+
+      </div>
+      <!--Grid row-->
+
+      <!--Grid row-->
+      <div class="row" style="margin-bottom: 40px;">
+        <div class="col-sm">
+          <div id="dChartContainer" style="height: 300px; width: 100%;"></div>
+        </div>
+        <div class="col-sm">
+          <div id="historyChart"></div>
+        </div>
+      </div>
+      <!--<div class="col-lg-6 col-md-6 mb-4" style="padding-bottom: 20px;">-->
+      <!--Grid row-->
+<!--       
+
+        
+      <div class="row wow fadeIn">
+
+        
+        <div class="col-lg-6 col-md-6 mb-4">
+
+        
+          <div class="card">
+
+        
+            <div class="card-header">Line chart</div>
+
+        
+            <div class="card-body">
+
+              <canvas id="lineChart"></canvas>
+
+            </div>
+
+          </div>
+        
+
+        </div>
+        
+
+        
+        <div class="col-lg-6 col-md-6 mb-4">
+
+        
+          <div class="card">
+
+        
+            <div class="card-header">Radar Chart</div>
+
+        
+            <div class="card-body">
+
+              <canvas id="radarChart"></canvas>
+
+            </div>
+
+          </div>
+        
+
+        </div> -->
+        
+
+      
+
+        <!--
+<div class="col-lg-6 col-md-6 mb-4">
+
+          Card
+          <div class="card">
+
+            Card header
+            <div class="card-header">Doughnut Chart</div>
+
+            Card content
+            <div class="card-body">
+
+              <canvas id="doughnutChart"></canvas>
+
+            </div>
+
+          </div>
+          /.Card
+
+        </div>
+        Grid column
+
+        Grid column
+        <div class="col-lg-6 col-md-6 mb-4">
+
+          Card
+          <div class="card">
+
+            Card header
+            <div class="card-header">Horizontal Bar Chart</div>
+
+            Card content
+            <div class="card-body">
+
+              <canvas id="horizontalBar"></canvas>
+
+            </div>
+
+          </div>
+          /.Card
+
+        </div>
+        -->
+        <!--Grid column-->
+      </div>
+      <!--Grid row-->
+      <br><br><br>
+      <div class="text-center">
+        <!--Card-->
+        <div class="card">
+
+          <!-- Card header -->
+          <div class="card-header">Your Location</div>
+
+          <!--Card content-->
+          <div class="card-body">
+            <!--Google map-->
+            <div id="map-container-google-2" class="z-depth-1-half map-container" style="height: 500px">
+              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15087.131380363086!2d72.84515863151671!3d19.029288278976974!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7ced0e96b48cf%3A0x7a816e69fb2d0324!2sMatunga%2C%20Mumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1587556054559!5m2!1sen!2sin" width="600" height="450" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+            </div>
+
+            <!--Google Maps-->
+
+          </div>
+
+        </div>
+        <!--/.Card-->
+      </div>
+      <!--Grid row-->
+
+    </div>
+  </main>
 
 
 {% endblock %}
